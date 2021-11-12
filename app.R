@@ -10,91 +10,104 @@ library(DT)
 ui <- fluidPage(
     titlePanel("Kill Team Comparative Simulator"),
     sidebarLayout(sidebarPanel(fluidRow(
-        column(
-            4,
-            h3('Left'),
-            numericInputIcon(
-                'attacks1',
-                label = 'Attacks',
-                value = 5,
-                min = 1,
-                max = 10,
-                step = 1
-            ),
-            numericInputIcon(
-                'bs1',
-                label = 'BS',
-                value = 3,
-                min = 1,
-                max = 10,
-                step = 1
-            ),
-            numericInputIcon(
-                'normaldamage1',
-                label = 'Normal Damage',
-                value = 3,
-                min = 1,
-                max = 10,
-                step = 1
-            ),
-            numericInputIcon(
-                'critdamage1',
-                label = 'Critical Damage',
-                value = 4,
-                min = 1,
-                max = 10,
-                step = 1
-            ),
-            numericInputIcon(
-                'ap1',
-                label = 'AP',
-                value = 0,
-                min = 0,
-                max = 10,
-                step = 1
-            ),
-            numericInputIcon(
-                'piercing1',
-                label = 'Piercing',
-                value = 0,
-                min = 0,
-                max = 10,
-                step = 1
-            ),
-            numericInputIcon(
-                'lethal1',
-                label = 'Lethal',
-                value = 0,
-                min = 0,
-                max = 5,
-                step = 1
-            ),
-            numericInputIcon(
-                'mw1',
-                label = 'Mortal Wounds',
-                value = 0,
-                min = 0,
-                max = 10,
-                step = 1
-            ),
-            awesomeCheckbox('rending1',
-                            label = 'Rending',
-                            value = FALSE),
-            awesomeCheckbox('starfire1',
-                            label = 'Starfire (Crit causes Miss -> Hit)',
-                            value = FALSE),
-            awesomeCheckbox('semilethal1',
-                            label = 'Semilethal (One 5+ Hit to Crit)',
-                            value = FALSE),
-            pickerInput(
-                'reroll1',
-                label = 'Reroll',
-                choices = c("", "C", "B", "R")
-            )
-        ),
+        column(4,            h3('Left'),
+               tabsetPanel(
+                   id = 'Weapon 1',
+                   tabPanel(
+                       'Weapon Values',
+                       value = 1,
+                       numericInputIcon(
+                           'attacks1',
+                           label = 'Attacks',
+                           value = 5,
+                           min = 1,
+                           max = 10,
+                           step = 1
+                       ),
+                       numericInputIcon(
+                           'bs1',
+                           label = 'BS',
+                           value = 3,
+                           min = 1,
+                           max = 10,
+                           step = 1
+                       ),
+                       numericInputIcon(
+                           'normaldamage1',
+                           label = 'Normal Damage',
+                           value = 3,
+                           min = 1,
+                           max = 10,
+                           step = 1
+                       ),
+                       numericInputIcon(
+                           'critdamage1',
+                           label = 'Critical Damage',
+                           value = 4,
+                           min = 1,
+                           max = 10,
+                           step = 1
+                       ),
+                       numericInputIcon(
+                           'ap1',
+                           label = 'AP',
+                           value = 0,
+                           min = 0,
+                           max = 10,
+                           step = 1
+                       ),
+                       numericInputIcon(
+                           'piercing1',
+                           label = 'Piercing',
+                           value = 0,
+                           min = 0,
+                           max = 10,
+                           step = 1
+                       ),
+                       numericInputIcon(
+                           'lethal1',
+                           label = 'Lethal',
+                           value = 0,
+                           min = 0,
+                           max = 5,
+                           step = 1
+                       ),
+                       numericInputIcon(
+                           'mw1',
+                           label = 'Mortal Wounds',
+                           value = 0,
+                           min = 0,
+                           max = 10,
+                           step = 1
+                       ),
+                       pickerInput(
+                           'reroll1',
+                           label = 'Reroll',
+                           choices = c("", "C", "B", "R")
+                       )
+                   ),
+                   tabPanel(
+                       'Special Rules',
+                       value = 2,
+                       awesomeCheckbox('rending1',
+                                       label = 'Rending',
+                                       value = FALSE),
+                       awesomeCheckbox('starfire1',
+                                       label = 'Starfire (Crit causes Miss -> Hit)',
+                                       value = FALSE),
+                       awesomeCheckbox('semilethal1',
+                                       label = 'Semilethal (One 5+ Hit to Crit)',
+                                       value = FALSE)
+                   )
+               )),
         column(
             4,
             h3('Right'),
+            tabsetPanel(
+                id = 'Weapon 2',
+                tabPanel(
+                    'Weapon Values',
+                    value = 1,
             numericInputIcon(
                 'attacks2',
                 label = 'Attacks',
@@ -158,7 +171,13 @@ ui <- fluidPage(
                 min = 0,
                 max = 10,
                 step = 1
-            ),
+            ),pickerInput(
+                'reroll2',
+                label = 'Reroll',
+                choices = c("", "C", "B", "R")
+            )),tabPanel(
+                'Special Rules',
+                value = 2,
             awesomeCheckbox('rending2',
                             label = 'Rending',
                             value = FALSE),
@@ -168,15 +187,15 @@ ui <- fluidPage(
             awesomeCheckbox('semilethal2',
                             label = 'Semilethal (One 5+ Hit to Crit)',
                             value = FALSE),
-            pickerInput(
-                'reroll2',
-                label = 'Reroll',
-                choices = c("", "C", "B", "R")
             )
-        ),
+        )),
         column(
             4,
-            h3('Defender'),
+            h3('Defender'),tabsetPanel(
+                id = 'Defender',
+                tabPanel(
+                    'Defender Values',
+                    value = 1,
             numericInputIcon(
                 'save',
                 label = 'Save',
@@ -200,7 +219,9 @@ ui <- fluidPage(
                 min = 0,
                 max = 4,
                 step = 1
-            ),
+            )),tabPanel(
+                'Special Rules',
+                value = 1),
             numericInputIcon(
                 'fnp',
                 label = 'FNP',
@@ -208,7 +229,7 @@ ui <- fluidPage(
                 min = 0,
                 max = 6,
                 step = 1
-            )
+            ))
             ,
         )
     )),
@@ -240,9 +261,10 @@ server <- function(input, output) {
                  SemiLethal,
                  FNP) {
             Output <- do.call(rbind, lapply(1:k, function(p) {
+                #Uses the same basic seed for both weapons
                 set.seed(SeedH[p])
                 Rolls <- sample(1:6, Attacks, replace = T)
-                set.seed(SeedS[p])
+                set.seed(SeedR[p])
                 #Lethal
                 CritNumber <- ifelse(Lethal > 0, Lethal, 6)
                 
@@ -273,19 +295,22 @@ server <- function(input, output) {
                     }
                 
                 Hits <-
-                    as.numeric(length(Rolls[Rolls >= BS & Rolls < CritNumber]))
+                    as.numeric(length(Rolls[Rolls >= BS &
+                                                Rolls < CritNumber]))
                 Crits <-
-                    as.numeric(length(Rolls[Rolls >= CritNumber]))
+                    as.numeric(length(Rolls[Rolls >= CritNumber &
+                                                Rolls >= BS]))
                 
                 
-                #Semi-Lethal
+                #Semi-Lethal (Convert one 5 into a crit or a 4/5 if you're Lethal 5+)
                 SemiL <-
                     ifelse(SemiLethal == TRUE &
                                (
                                    Lethal < 5 &
                                        (length(Rolls[Rolls >= BS &
                                                          Rolls == 5]) >= 1) |
-                                       Lethal < 4 & length(Rolls[Rolls >= BS & Rolls == 4]) >= 1
+                                       Lethal < 4 &
+                                       Lethal > 0 & length(Rolls[Rolls >= BS & Rolls == 4]) >= 1
                                ),
                            1,
                            0)
@@ -294,14 +319,16 @@ server <- function(input, output) {
                 
                 #Rending
                 Rends <-
-                    ifelse(Rending == TRUE & Crits >= 1 & Hits >= 1, 1, 0)
+                    ifelse(Rending == TRUE &
+                               Crits >= 1 & Hits >= 1, 1, 0)
                 Crits <- ifelse(Rends == 1, Crits + 1, Crits)
                 Hits <- ifelse(Rends == 1, Hits - 1, Hits)
                 
                 #Starfire
                 Exploit <-
                     ifelse(Starfire == TRUE &
-                               (Crits + Hits) < Attacks & Crits >= 1,
+                               (Crits + Hits) < Attacks &
+                               Crits >= 1,
                            1,
                            0)
                 Hits <- ifelse(Exploit == 1, Hits + 1, Hits)
@@ -325,26 +352,26 @@ server <- function(input, output) {
                 } else{
                     DefenseUse
                 }
+                set.seed(SeedS[p])
                 Saves <- sample(1:6, DefenseUse, replace = T)
                 
                 
                 NSaves <-
-                    as.numeric(length(Saves[Saves >= Save & Saves < 6]))
+                    as.numeric(length(Saves[Saves >= Save &
+                                                Saves < 6]))
                 NSaves <- if (Cover > 0) {
                     NSaves + Cover
                 } else{
                     NSaves
                 }
                 CSaves <- as.numeric(length(Saves[Saves == 6]))
-                #FIX FOR MELTAS
                 
-                
-
+                #Convert Excess crit saves to normal saves
                 
                 C2H <-
                     ifelse(CritDamage < NormalDamage &
                                Hits - NSaves > 0,
-                            max(0,CSaves - (Hits - NSaves)),
+                           max(0, CSaves - (Hits - NSaves)),
                            0)
                 
                 
@@ -355,41 +382,68 @@ server <- function(input, output) {
                            C2H)
                 
                 CSaves <- CSaves - C2H
+                NSaves <- NSaves + C2H
+                
+                #Convert excess normal saves to crit saves if crit damage is more than or equal to normal damage
                 
                 H2C <-
-                    ifelse(Crits > 0 &
-                               NSaves - Hits >= 1 &
+                    ifelse(Crits - CSaves > 0 &
+                               NSaves > Hits &
                                CritDamage >= NormalDamage &
                                NSaves >= 2,
                            2,
                            0)
-                CritO <- Crits - (H2C / 2)
-                
-
-                
+                CSaves <- CSaves + (H2C / 2)
                 NSaves <- NSaves - H2C
-                HitO <- max(0, Hits - NSaves - C2H)
-                H2C2 <-
-                    ifelse(NSaves - Hits >= 2 &
-                               CritDamage <= 2 * NormalDamage,
-                           floor((NSaves - Hits) / 2),
+                
+                #Do it again in the case of 4 defense dice
+                
+                H2C <-
+                    ifelse(Crits > 0 &
+                               NSaves > Hits &
+                               CritDamage >= NormalDamage &
+                               NSaves >= 2,
+                           2,
                            0)
+                CSaves <- CSaves + (H2C / 2)
+                NSaves <- NSaves - H2C
+                
+                
+                
+                # H2C2 <-
+                #     ifelse(NSaves - Hits >= 2 &
+                #                CritDamage <= 2 * NormalDamage,
+                #            floor((NSaves - Hits) / 2),
+                #            0)
+                
+                #Convert all normal saves to crit saves if crit damage is more than double normal damage
+                
                 H2C2 <-
-                    ifelse(CritDamage > 2 * NormalDamage, floor((NSaves - Hits) / 2), H2C2)
-                
-                CSaves <- CSaves + (H2C/2) + H2C2
-                
-                CritO <- max(0, CritO - CSaves)
+                    ifelse(CritDamage > 2 * NormalDamage, floor((NSaves - (
+                        Crits - CSaves
+                    )) / 2), 0)
+                CSaves <- CSaves + H2C2
                 NSaves <- NSaves - (H2C2 * 2)
-
+                
+                #Find obtained Hits and Crits
+                
+                HitO <- max(0, Hits - NSaves)
+                CritO <- max(0, Crits - CSaves)
+                # CSaves <- CSaves + (H2C/2) + H2C2
+                
+                
+                # NSaves <- NSaves - (H2C2 * 2)
+                
+                #Calculate damage
+                
                 NDamage <-
-                    ifelse(HitO * NormalDamage > 0, max(0,HitO * NormalDamage), 0)
+                    ifelse(HitO * NormalDamage > 0, max(0, HitO * NormalDamage), 0)
                 CDamage <-
-                    ifelse(CritO * CritDamage > 0, max(0,CritO * CritDamage), 0)
+                    ifelse(CritO * CritDamage > 0, max(0, CritO * CritDamage), 0)
                 Damage <-
                     ifelse(NDamage + CDamage < 0, 0, NDamage + CDamage) + Mortals
                 
-                #FNP
+                #FNP rolls
                 FNPRolls <- sample(1:6, Damage, replace = T)
                 Damage <-
                     ifelse(FNP > 0, Damage - length(FNPRolls[FNPRolls >= FNP]), Damage)
@@ -433,13 +487,16 @@ server <- function(input, output) {
     }
     k <- 1000
     SeedH <- sample(1:k, k, replace = TRUE)
+    SeedR <- sample(1:k, k, replace = TRUE)
     SeedS <- sample(1:k, k, replace = TRUE)
     
-
+    
     
     A <- 'Left'
     B <- 'Right'
-    C <- reactive({input$save})
+    C <- reactive({
+        input$save
+    })
     
     W1 <- reactive({
         W1 <- RangedSim(
@@ -498,7 +555,8 @@ server <- function(input, output) {
         Gun2Chart(W1(), W2(), C)
     })
     output$W3Table <-
-        DT::renderDataTable(DT::datatable(W3()))
+        DT::renderDataTable(DT::datatable(select(W3(),Damage = Number, Left = W1, 'Left Events' = Events.x, Right = W2, 'Right Events' = Events.y),
+                                          options = list(paging = TRUE,pageLength = 60)))
     colors <- c("blue", "red")
     names(colors) <- c(A, B)
     
