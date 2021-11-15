@@ -178,7 +178,7 @@ ui <- fluidPage(
                         pickerInput(
                             'reroll2',
                             label = 'Reroll',
-                            choices = c("", "C", "B", "R")
+                            choices = c("", "Ceaseless", "Balanced", "Relentless")
                         )
                     ),
                     tabPanel(
@@ -433,6 +433,7 @@ server <- function(input, output) {
                 } else{
                     DefenseUse
                 }
+                DefenseUse <- max(0,DefenseUse)
                 set.seed(SeedS[p])
                 Saves <- sample(1:6, DefenseUse, replace = T)
                 
