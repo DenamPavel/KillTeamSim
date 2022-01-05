@@ -24,7 +24,7 @@ ui <- fluidPage(
                                label = 'Attacks',
                                value = 5,
                                min = 1,
-                               max = 10,
+                               max = 30,
                                step = 1
                            ),
                            numericInputIcon(
@@ -86,7 +86,7 @@ ui <- fluidPage(
                            pickerInput(
                                'reroll1',
                                label = 'Reroll',
-                               choices = c("", "Ceaseless", "Balanced", "Relentless")
+                               choices = c("", "Ceaseless", "Balanced", "Relentless","Relentless CritFish")
                            )
                        ),
                        tabPanel(
@@ -116,7 +116,7 @@ ui <- fluidPage(
                             label = 'Attacks',
                             value = 4,
                             min = 1,
-                            max = 10,
+                            max = 30,
                             step = 1
                         ),
                         numericInputIcon(
@@ -178,7 +178,7 @@ ui <- fluidPage(
                         pickerInput(
                             'reroll2',
                             label = 'Reroll',
-                            choices = c("", "Ceaseless", "Balanced", "Relentless")
+                            choices = c("", "Ceaseless", "Balanced", "Relentless","Relentless CritFish")
                         )
                     ),
                     tabPanel(
@@ -216,7 +216,7 @@ ui <- fluidPage(
                             'defense',
                             label = 'Defense',
                             value = 3,
-                            min = 1,
+                            min = 0,
                             max = 10,
                             step = 1
                         ),
@@ -247,7 +247,10 @@ ui <- fluidPage(
                             min = 0,
                             max = 6,
                             step = 1
-                        )
+                        ),
+                        awesomeCheckbox('dgbanner',
+                                        label = 'FNP 1/2 Rerolls',
+                                        value = FALSE)
                     )
                 )
                 ,
@@ -338,7 +341,8 @@ server <- function(input, output) {
                  Lethal,
                  SemiLethal,
                  FNP,
-                 DfRerolls) {
+                 DfRerolls,
+                 DGBanner) {
             Output <- do.call(rbind, lapply(1:k, function(p) {
                 #Uses the same basic seed for both weapons
                 set.seed(SeedH[p])
@@ -359,6 +363,10 @@ server <- function(input, output) {
                     } else if (Rerolls == 'Relentless') {
                         as.numeric(c(Rolls[Rolls >= BS], sample(
                             1:6, length(Rolls[Rolls < BS]), replace = T
+                        )))
+                    } else if (Rerolls == 'Relentless CritFish') {
+                        as.numeric(c(Rolls[Rolls >= CritNumber], sample(
+                            1:6, length(Rolls[Rolls < CritNumber]), replace = T
                         )))
                     } else{
                         Rolls
@@ -435,7 +443,7 @@ server <- function(input, output) {
                 }
                 DefenseUse <- max(0,DefenseUse)
                 set.seed(SeedS[p])
-                Saves <- sample(1:6, DefenseUse, replace = T)
+                Saves <- sample(1:6, max(0,DefenseUse), replace = T)
                 
                 Saves <- if (DfRerolls > 0) {
                     as.numeric(c(Saves[Saves >= Save], sample(
@@ -537,15 +545,17 @@ server <- function(input, output) {
                 
                 #FNP rolls
                 FNPRolls <- sample(1:6, Damage, replace = T)
+                FNPRolls <-
+                    if(DGBanner == TRUE){c(FNPRolls[FNPRolls >= 3], sample(1:6, length(FNPRolls[FNPRolls <=
+                                                                                                        2 & FNPRolls < FNP]), replace = TRUE))}else {FNPRolls}
                 Damage <-
-                    ifelse(FNP > 0, Damage - length(FNPRolls[FNPRolls >= FNP]), Damage)
+                    max(0,ifelse(FNP > 0, Damage - length(FNPRolls[FNPRolls >= FNP]), Damage))
                 DamageOutput <-
                     as.data.frame(Damage)
                 return(DamageOutput)
             }))
             
             
-            #m <- 3
             OutputProb <-
                 do.call(rbind, lapply(unique(c(
                     0, unique(Output$Damage)
@@ -560,7 +570,7 @@ server <- function(input, output) {
                     return(DamageNumber)
                 }))
             Number <-
-                c(min(OutputProb$Number):max(OutputProb$Number))
+                c(1:max(OutputProb$Number))
             NumberVector <- as.data.frame(Number)
             OutputProb <-
                 left_join(NumberVector, OutputProb) %>% fill(DamageNumber, .direction = 'up') %>% fill(Events, .direction = 'up')
@@ -610,7 +620,8 @@ server <- function(input, output) {
             Lethal = input$lethal1,
             SemiLethal = input$semilethal1,
             FNP = input$fnp,
-            DfRerolls = input$dfrerolls
+            DfRerolls = input$dfrerolls,
+            DGBanner = input$dgbanner
         ) %>% filter(Number2 > 0)
         return(W1)
     })
@@ -636,7 +647,8 @@ server <- function(input, output) {
             Lethal = input$lethal2,
             SemiLethal = input$semilethal2,
             FNP = input$fnp,
-            DfRerolls = input$dfrerolls
+            DfRerolls = input$dfrerolls,
+            DGBanner = input$dgbanner
         ) %>% filter(Number2 > 0)
         return(W2)
     })
