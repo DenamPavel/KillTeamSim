@@ -86,7 +86,7 @@ ui <- fluidPage(
                            pickerInput(
                                'reroll1',
                                label = 'Reroll',
-                               choices = c("", "Ceaseless", "Balanced", "Relentless","Relentless CritFish")
+                               choices = c("", "Ceaseless", "Balanced", "Relentless","Relentless CritFish","Cult Ambush")
                            )
                        ),
                        tabPanel(
@@ -100,7 +100,18 @@ ui <- fluidPage(
                                            value = FALSE),
                            awesomeCheckbox('semilethal1',
                                            label = 'Semilethal (One 5+ Hit to Crit)',
-                                           value = FALSE)
+                                           value = FALSE),
+                           numericInputIcon(
+                               'autoretain1',
+                               label = 'AutoRetain',
+                               value = 0,
+                               min = 0,
+                               max = 5,
+                               step = 1
+                           ),
+                           awesomeCheckbox('forcecrit1',
+                                             label = 'Forced Crit',
+                                             value = FALSE),
                        )
                    )),
             column(
@@ -178,7 +189,7 @@ ui <- fluidPage(
                         pickerInput(
                             'reroll2',
                             label = 'Reroll',
-                            choices = c("", "Ceaseless", "Balanced", "Relentless","Relentless CritFish")
+                            choices = c("", "Ceaseless", "Balanced", "Relentless","Relentless CritFish","Cult Ambush")
                         )
                     ),
                     tabPanel(
@@ -193,6 +204,17 @@ ui <- fluidPage(
                         awesomeCheckbox('semilethal2',
                                         label = 'Semilethal (One 5+ Hit to Crit)',
                                         value = FALSE),
+                        numericInputIcon(
+                            'autoretain2',
+                            label = 'AutoRetain',
+                            value = 0,
+                            min = 0,
+                            max = 5,
+                            step = 1
+                        ),
+                        awesomeCheckbox('forcecrit2',
+                                          label = 'Forced Crit',
+                                          value = FALSE),
                     )
                 )
             ),
@@ -319,7 +341,10 @@ ui <- fluidPage(
         "
     )
 )
-
+getmode <- function(v) {
+    uniqv <- unique(v)
+    uniqv[which.max(tabulate(match(v, uniqv)))]
+}
 
 server <- function(input, output) {
     RangedSim <-
@@ -342,24 +367,25 @@ server <- function(input, output) {
                  SemiLethal,
                  FNP,
                  DfRerolls,
-                 DGBanner) {
+                 DGBanner,
+                 AutoRetain,
+                 ForcedCrit) {
             Output <- do.call(rbind, lapply(1:k, function(p) {
                 #Uses the same basic seed for both weapons
+                Attacks <- max(0,Attacks-AutoRetain)
                 set.seed(SeedH[p])
                 Rolls <- sample(1:6, Attacks, replace = T)
                 set.seed(SeedR[p])
                 #Lethal
                 CritNumber <- ifelse(Lethal > 0, Lethal, 6)
-                
-                
-                
+
                 
                 #Rerolls
                 Rolls <-
                     if (Rerolls == 'Ceaseless') {
                         as.numeric(c(Rolls[Rolls >= BS], sample(
                             1:6, length(Rolls[Rolls == 1]), replace = T
-                        )))
+                        ),Rolls[Rolls>1 & Rolls <BS]))
                     } else if (Rerolls == 'Relentless') {
                         as.numeric(c(Rolls[Rolls >= BS], sample(
                             1:6, length(Rolls[Rolls < BS]), replace = T
@@ -368,6 +394,13 @@ server <- function(input, output) {
                         as.numeric(c(Rolls[Rolls >= CritNumber], sample(
                             1:6, length(Rolls[Rolls < CritNumber]), replace = T
                         )))
+                    } else if (Rerolls == 'Cult Ambush') {
+                        # Attacks <- 4
+                        # BS <- 2
+                        # Rolls <- sample(1:6, Attacks, replace = T)
+                        as.numeric(c(Rolls[Rolls >= BS], sample(
+                            1:6, length(subset(Rolls, Rolls == getmode(Rolls[Rolls<BS]))), replace = T
+                        ),Rolls[Rolls < BS & Rolls != getmode(Rolls[Rolls<BS])]))
                     } else{
                         Rolls
                     }
@@ -380,13 +413,14 @@ server <- function(input, output) {
                     } else{
                         Rolls[1]
                     }
+                Hits <- suppressWarnings(if(is.na(Rolls)){AutoRetain} else{
                 
-                Hits <-
                     as.numeric(length(Rolls[Rolls >= BS &
-                                                Rolls < CritNumber]))
-                Crits <-
+                                                Rolls < CritNumber])) + AutoRetain})
+                Crits <- suppressWarnings(if(is.na(Rolls)){0} else{
                     as.numeric(length(Rolls[Rolls >= CritNumber &
-                                                Rolls >= BS]))
+                                                Rolls >= BS]))})
+                
                 
                 
                 #Semi-Lethal (Convert one 5 into a crit or a 4/5 if you're Lethal 5+)
@@ -405,7 +439,8 @@ server <- function(input, output) {
                            0)
                 Hits <- Hits - SemiL
                 Crits <- Crits + SemiL
-                
+                Hits <- ifelse(ForcedCrit == TRUE & Hits > 0,Hits-1,Hits)
+                Crits <- ifelse(ForcedCrit == TRUE & Hits > 0, Crits + 1, Crits)
                 #Rending
                 Rends <-
                     ifelse(Rending == TRUE &
@@ -621,7 +656,9 @@ server <- function(input, output) {
             SemiLethal = input$semilethal1,
             FNP = input$fnp,
             DfRerolls = input$dfrerolls,
-            DGBanner = input$dgbanner
+            DGBanner = input$dgbanner,
+            AutoRetain = input$autoretain1,
+            ForcedCrit = input$forcecrit1
         ) %>% filter(Number2 > 0)
         return(W1)
     })
@@ -648,7 +685,9 @@ server <- function(input, output) {
             SemiLethal = input$semilethal2,
             FNP = input$fnp,
             DfRerolls = input$dfrerolls,
-            DGBanner = input$dgbanner
+            DGBanner = input$dgbanner,
+            AutoRetain = input$autoretain2,
+            ForcedCrit = input$forcecrit2
         ) %>% filter(Number2 > 0)
         return(W2)
     })
@@ -670,7 +709,12 @@ server <- function(input, output) {
                 Right = W2,
                 'Right Events' = Events.y
             ),
-            options = list(paging = TRUE, pageLength = 60)
+            options = list(paging = TRUE, pageLength = 60,
+                           initComplete = JS(
+                               "function(settings, json) {",
+                               "$(this.api().table().header()).css({'color': '#000'});",
+                               "}")
+                           )
         ))
     colors <- c("blue", "red")
     names(colors) <- c(A, B)
