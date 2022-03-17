@@ -273,6 +273,13 @@ ui <- fluidPage(
                         awesomeCheckbox('dgbanner',
                                         label = 'FNP 1/2 Rerolls',
                                         value = FALSE)
+                        ,
+                        awesomeCheckbox('thuman',
+                                        label = 'Transhuman (Save -> Crit Save)',
+                                        value = FALSE),
+                        awesomeCheckbox('starsaves',
+                                        label = 'Starfire Saves (Crit -> Convert Failed Save)',
+                                        value = FALSE)
                     )
                 )
                 ,
@@ -369,7 +376,9 @@ server <- function(input, output) {
                  DfRerolls,
                  DGBanner,
                  AutoRetain,
-                 ForcedCrit) {
+                 ForcedCrit,
+                 Transhuman,
+                 StarfireSaves) {
             Output <- do.call(rbind, lapply(1:k, function(p) {
                 #Uses the same basic seed for both weapons
                 Attacks <- max(0,Attacks-AutoRetain)
@@ -497,12 +506,22 @@ server <- function(input, output) {
                 } else{
                     NSaves
                 }
+                #Cap saves at Defense dice minus AP
+                NSaves <- min(NSaves, Defense - AP)
                 CSaves <- as.numeric(length(Saves[Saves == 6]))
                 
+                if(Transhuman == TRUE & NSaves > 0){
+                    CSaves <- CSaves + 1
+                    NSaves <- NSaves - 1
+                }
+                
+                if(StarfireSaves == TRUE & CSaves > 1 & NSaves + CSaves < Defense - AP){
+                    NSaves <- NSaves + 1
+                }
                 
                 
                 #Convert Excess crit saves to normal saves
-                
+                C2H <- 0
                 C2H <-
                     ifelse(CritDamage < NormalDamage &
                                Hits - NSaves > 0,
@@ -658,7 +677,9 @@ server <- function(input, output) {
             DfRerolls = input$dfrerolls,
             DGBanner = input$dgbanner,
             AutoRetain = input$autoretain1,
-            ForcedCrit = input$forcecrit1
+            ForcedCrit = input$forcecrit1,
+            Transhuman = input$thuman,
+            StarfireSaves = input$starsaves
         ) %>% filter(Number2 > 0)
         return(W1)
     })
@@ -687,7 +708,9 @@ server <- function(input, output) {
             DfRerolls = input$dfrerolls,
             DGBanner = input$dgbanner,
             AutoRetain = input$autoretain2,
-            ForcedCrit = input$forcecrit2
+            ForcedCrit = input$forcecrit2,
+            Transhuman = input$thuman,
+            StarfireSaves = input$starsaves
         ) %>% filter(Number2 > 0)
         return(W2)
     })
