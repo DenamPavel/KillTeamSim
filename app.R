@@ -39,7 +39,7 @@ ui <- fluidPage(
                                'normaldamage1',
                                label = 'Normal Damage',
                                value = 3,
-                               min = 1,
+                               min = 0,
                                max = 10,
                                step = 1
                            ),
@@ -112,6 +112,9 @@ ui <- fluidPage(
                            awesomeCheckbox('forcecrit1',
                                              label = 'Forced Crit',
                                              value = FALSE),
+                           awesomeCheckbox('nocover1',
+                                           label = 'No Cover',
+                                           value = FALSE)
                        )
                    )),
             column(
@@ -215,6 +218,9 @@ ui <- fluidPage(
                         awesomeCheckbox('forcecrit2',
                                           label = 'Forced Crit',
                                           value = FALSE),
+                        awesomeCheckbox('nocover2',
+                                        label = 'No Cover',
+                                        value = FALSE),
                     )
                 )
             ),
@@ -378,7 +384,8 @@ server <- function(input, output) {
                  AutoRetain,
                  ForcedCrit,
                  Transhuman,
-                 StarfireSaves) {
+                 StarfireSaves,
+                 NoCover) {
             Output <- do.call(rbind, lapply(1:k, function(p) {
                 #Uses the same basic seed for both weapons
                 Attacks <- max(0,Attacks-AutoRetain)
@@ -450,12 +457,7 @@ server <- function(input, output) {
                 Crits <- Crits + SemiL
                 Hits <- ifelse(ForcedCrit == TRUE & Hits > 0,Hits-1,Hits)
                 Crits <- ifelse(ForcedCrit == TRUE & Hits > 0, Crits + 1, Crits)
-                #Rending
-                Rends <-
-                    ifelse(Rending == TRUE &
-                               Crits >= 1 & Hits >= 1, 1, 0)
-                Crits <- ifelse(Rends == 1, Crits + 1, Crits)
-                Hits <- ifelse(Rends == 1, Hits - 1, Hits)
+                
                 
                 #Starfire
                 Exploit <-
@@ -465,6 +467,13 @@ server <- function(input, output) {
                            1,
                            0)
                 Hits <- ifelse(Exploit == 1, Hits + 1, Hits)
+                
+                #Rending
+                Rends <-
+                    ifelse(Rending == TRUE &
+                               Crits >= 1 & Hits >= 1, 1, 0)
+                Crits <- ifelse(Rends == 1, Crits + 1, Crits)
+                Hits <- ifelse(Rends == 1, Hits - 1, Hits)
                 
                 #Mortal Wounds
                 Mortals <- MW * Crits
@@ -480,7 +489,7 @@ server <- function(input, output) {
                     } else {
                         Defense
                     }
-                DefenseUse <- if (Cover > 0) {
+                DefenseUse <- if (Cover > 0 & NoCover == FALSE) {
                     DefenseUse - Cover
                 } else{
                     DefenseUse
@@ -501,7 +510,7 @@ server <- function(input, output) {
                 NSaves <-
                     as.numeric(length(Saves[Saves >= Save &
                                                 Saves < 6]))
-                NSaves <- if (Cover > 0) {
+                NSaves <- if (Cover > 0 & NoCover == FALSE) {
                     NSaves + Cover
                 } else{
                     NSaves
@@ -679,7 +688,8 @@ server <- function(input, output) {
             AutoRetain = input$autoretain1,
             ForcedCrit = input$forcecrit1,
             Transhuman = input$thuman,
-            StarfireSaves = input$starsaves
+            StarfireSaves = input$starsaves,
+            NoCover = input$nocover1
         ) %>% filter(Number2 > 0)
         return(W1)
     })
@@ -710,7 +720,8 @@ server <- function(input, output) {
             AutoRetain = input$autoretain2,
             ForcedCrit = input$forcecrit2,
             Transhuman = input$thuman,
-            StarfireSaves = input$starsaves
+            StarfireSaves = input$starsaves,
+            NoCover = input$nocover2
         ) %>% filter(Number2 > 0)
         return(W2)
     })
