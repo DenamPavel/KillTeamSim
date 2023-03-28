@@ -12,81 +12,41 @@ ui <- fluidPage(
     theme = shinytheme("flatly"),
     titlePanel("Kill Team Comparative Simulator"),
     sidebarLayout(
-        sidebarPanel(fluidRow(
-            column(4,            h3('Left'),
+        sidebarPanel( width = 4,fluidRow(
+            column(4,            h3('Blue'),
                    tabsetPanel(
                        id = 'Weapon 1',
                        tabPanel(
                            'Weapon Values',
                            value = 1,
-                           numericInputIcon(
-                               'attacks1',
-                               label = 'Attacks',
-                               value = 5,
-                               min = 1,
-                               max = 30,
-                               step = 1
-                           ),
-                           numericInputIcon(
-                               'bs1',
-                               label = 'BS',
-                               value = 3,
-                               min = 1,
-                               max = 10,
-                               step = 1
-                           ),
-                           numericInputIcon(
-                               'normaldamage1',
-                               label = 'Normal Damage',
-                               value = 3,
-                               min = 0,
-                               max = 10,
-                               step = 1
-                           ),
-                           numericInputIcon(
-                               'critdamage1',
-                               label = 'Critical Damage',
-                               value = 4,
-                               min = 1,
-                               max = 10,
-                               step = 1
-                           ),
-                           numericInputIcon(
-                               'ap1',
-                               label = 'AP',
-                               value = 0,
-                               min = 0,
-                               max = 10,
-                               step = 1
-                           ),
-                           numericInputIcon(
-                               'piercing1',
-                               label = 'Piercing',
-                               value = 0,
-                               min = 0,
-                               max = 10,
-                               step = 1
-                           ),
-                           numericInputIcon(
-                               'lethal1',
-                               label = 'Lethal',
-                               value = 0,
-                               min = 0,
-                               max = 5,
-                               step = 1
-                           ),
-                           numericInputIcon(
-                               'mw1',
-                               label = 'Mortal Wounds',
-                               value = 0,
-                               min = 0,
-                               max = 10,
-                               step = 1
-                           ),
+                           selectInput("attacks1", label = strong("Attacks"),
+                                       choices = c(1:30),
+                                       selected = 4),
+                           selectInput("bs1", label = strong("BS"), 
+                                       choices = c(2:6), 
+                                       selected = 3),
+                           selectInput("normaldamage1", label = strong("Normal Damage"), 
+                                       choices = c(0:10), 
+                                       selected = 3),
+                           selectInput("critdamage1", label = strong("Critical Damage"), 
+                                       choices = c(0:10), 
+                                       selected = 4),
+                           selectInput("ap1", label = strong("AP"), 
+                                       choices = c(0:4), 
+                                       selected = 0),
+                           selectInput("piercing1", label = strong("Piercing"), 
+                                       choices = c(0:4), 
+                                       selected = 0),
+                           selectInput("lethal1", label = strong("Lethal"), 
+                                       choices = c(0:5), 
+                                       selected = 0),
+                           selectInput("mw1", label = strong("Mortal Wounds"), 
+                                       choices = c(0:10), 
+                                       selected = 0),
                            pickerInput(
                                'reroll1',
                                label = 'Reroll',
-                               choices = c("", "Ceaseless", "Balanced", "Relentless","Relentless CritFish","Cult Ambush")
+                               choices = c("None", "Ceaseless", "Balanced", "Relentless","Relentless CritFish","Cult Ambush")
                            )
                        ),
                        tabPanel(
@@ -101,129 +61,94 @@ ui <- fluidPage(
                            awesomeCheckbox('semilethal1',
                                            label = 'Semilethal (One 5+ Hit to Crit)',
                                            value = FALSE),
-                           numericInputIcon(
-                               'autoretain1',
-                               label = 'AutoRetain',
-                               value = 0,
-                               min = 0,
-                               max = 5,
-                               step = 1
-                           ),
+                           awesomeCheckbox('elite1',
+                                           label = 'Elite',
+                                           value = FALSE),
+                           awesomeCheckbox('closeassault1',
+                                           label = 'Close Assault (2 hits cause Miss -> Hit)',
+                                           value = FALSE),
+                           selectInput("autoretain1", label = strong("AutoRetain"), 
+                                       choices = c(0:5), 
+                                       selected = 0),
                            awesomeCheckbox('forcecrit1',
                                              label = 'Forced Crit',
                                              value = FALSE),
                            awesomeCheckbox('nocover1',
                                            label = 'No Cover',
+                                           value = FALSE),
+                           awesomeCheckbox('RR61',
+                                           label = 'Force Reroll 6s',
                                            value = FALSE)
                        )
                    )),
-            column(
-                4,
-                h3('Right'),
-                tabsetPanel(
-                    id = 'Weapon 2',
-                    tabPanel(
-                        'Weapon Values',
-                        value = 1,
-                        numericInputIcon(
-                            'attacks2',
-                            label = 'Attacks',
-                            value = 4,
-                            min = 1,
-                            max = 30,
-                            step = 1
-                        ),
-                        numericInputIcon(
-                            'bs2',
-                            label = 'BS',
-                            value = 3,
-                            min = 1,
-                            max = 10,
-                            step = 1
-                        ),
-                        numericInputIcon(
-                            'normaldamage2',
-                            label = 'Normal Damage',
-                            value = 3,
-                            min = 1,
-                            max = 10,
-                            step = 1
-                        ),
-                        numericInputIcon(
-                            'critdamage2',
-                            label = 'Critical Damage',
-                            value = 4,
-                            min = 1,
-                            max = 10,
-                            step = 1
-                        ),
-                        numericInputIcon(
-                            'ap2',
-                            label = 'AP',
-                            value = 0,
-                            min = 0,
-                            max = 10,
-                            step = 1
-                        ),
-                        numericInputIcon(
-                            'piercing2',
-                            label = 'Piercing',
-                            value = 0,
-                            min = 0,
-                            max = 10,
-                            step = 1
-                        ),
-                        numericInputIcon(
-                            'lethal2',
-                            label = 'Lethal',
-                            value = 0,
-                            min = 0,
-                            max = 5,
-                            step = 1
-                        ),
-                        numericInputIcon(
-                            'mw2',
-                            label = 'Mortal Wounds',
-                            value = 0,
-                            min = 0,
-                            max = 10,
-                            step = 1
-                        ),
-                        pickerInput(
-                            'reroll2',
-                            label = 'Reroll',
-                            choices = c("", "Ceaseless", "Balanced", "Relentless","Relentless CritFish","Cult Ambush")
-                        )
-                    ),
-                    tabPanel(
-                        'Special Rules',
-                        value = 2,
-                        awesomeCheckbox('rending2',
-                                        label = 'Rending',
-                                        value = FALSE),
-                        awesomeCheckbox('starfire2',
-                                        label = 'Starfire (Crit causes Miss -> Hit)',
-                                        value = FALSE),
-                        awesomeCheckbox('semilethal2',
-                                        label = 'Semilethal (One 5+ Hit to Crit)',
-                                        value = FALSE),
-                        numericInputIcon(
-                            'autoretain2',
-                            label = 'AutoRetain',
-                            value = 0,
-                            min = 0,
-                            max = 5,
-                            step = 1
-                        ),
-                        awesomeCheckbox('forcecrit2',
-                                          label = 'Forced Crit',
-                                          value = FALSE),
-                        awesomeCheckbox('nocover2',
-                                        label = 'No Cover',
-                                        value = FALSE),
-                    )
-                )
-            ),
+            column(4,            h3('Red'),
+                   tabsetPanel(
+                     id = 'Weapon 1',
+                     tabPanel(
+                       'Weapon Values',
+                       value = 1,
+                       selectInput("attacks2", label = strong("Attacks"),
+                                   choices = c(1:30),
+                                   selected = 4),
+                       selectInput("bs2", label = strong("BS"), 
+                                   choices = c(2:6), 
+                                   selected = 3),
+                       selectInput("normaldamage2", label = strong("Normal Damage"), 
+                                   choices = c(0:10), 
+                                   selected = 2),
+                       selectInput("critdamage2", label = strong("Critical Damage"), 
+                                   choices = c(0:10), 
+                                   selected = 3),
+                       selectInput("ap2", label = strong("AP"), 
+                                   choices = c(0:4), 
+                                   selected = 0),
+                       selectInput("piercing2", label = strong("Piercing"), 
+                                   choices = c(0:4), 
+                                   selected = 0),
+                       selectInput("lethal2", label = strong("Lethal"), 
+                                   choices = c(0:5), 
+                                   selected = 0),
+                       selectInput("mw2", label = strong("Mortal Wounds"), 
+                                   choices = c(0:10), 
+                                   selected = 0),
+                       pickerInput(
+                         'reroll2',
+                         label = 'Reroll',
+                         choices = c("None", "Ceaseless", "Balanced", "Relentless","Relentless CritFish","Cult Ambush")
+                       )
+                     ),
+                     tabPanel(
+                       'Special Rules',
+                       value = 2,
+                       awesomeCheckbox('rending2',
+                                       label = 'Rending',
+                                       value = FALSE),
+                       awesomeCheckbox('starfire2',
+                                       label = 'Starfire (Crit causes Miss -> Hit)',
+                                       value = FALSE),
+                       awesomeCheckbox('semilethal2',
+                                       label = 'Semilethal (One 5+ Hit to Crit)',
+                                       value = FALSE),
+                       awesomeCheckbox('elite2',
+                                       label = 'Elite',
+                                       value = FALSE),
+                       awesomeCheckbox('closeassault2',
+                                       label = 'Close Assault (2 hits cause Miss -> Hit)',
+                                       value = FALSE),
+                       selectInput("autoretain2", label = strong("AutoRetain"), 
+                                   choices = c(0:5), 
+                                   selected = 0),
+                       awesomeCheckbox('forcecrit2',
+                                       label = 'Forced Crit',
+                                       value = FALSE),
+                       awesomeCheckbox('nocover2',
+                                       label = 'No Cover',
+                                       value = FALSE),
+                       awesomeCheckbox('RR62',
+                                       label = 'Force Reroll 6s',
+                                       value = FALSE)
+                     )
+                   )),
             column(
                 4,
                 h3('Defender'),
@@ -232,60 +157,41 @@ ui <- fluidPage(
                     tabPanel(
                         'Defender Values',
                         value = 1,
-                        numericInputIcon(
-                            'save',
-                            label = 'Save',
-                            value = 3,
-                            min = 1,
-                            max = 10,
-                            step = 1
-                        ),
-                        numericInputIcon(
-                            'defense',
-                            label = 'Defense',
-                            value = 3,
-                            min = 0,
-                            max = 10,
-                            step = 1
-                        ),
-                        numericInputIcon(
-                            'cover',
-                            label = 'Cover',
-                            value = 0,
-                            min = 0,
-                            max = 4,
-                            step = 1
-                        )
+                        selectInput("save", label = strong("Save"), 
+                                    choices = c(1:6), 
+                                    selected = 3),
+                        selectInput("defense", label = strong("Defense"), 
+                                    choices = c(0:10), 
+                                    selected = 3),
+                        selectInput("cover", label = strong("Cover"), 
+                                    choices = c(0:4), 
+                                    selected = 0)
                     ),
                     tabPanel(
                         'Special Rules',
                         value = 2,
-                        numericInputIcon(
-                            'fnp',
-                            label = 'FNP',
-                            value = 0,
-                            min = 0,
-                            max = 6,
-                            step = 1
-                        ),
-                        numericInputIcon(
-                            'dfrerolls',
-                            label = 'Defensive Rerolls',
-                            value = 0,
-                            min = 0,
-                            max = 6,
-                            step = 1
-                        ),
+                        selectInput("fnp", label = strong("FNP"), 
+                                    choices = c(0:6), 
+                                    selected = 0),
+                        selectInput("dfrerolls", label = strong("Defensive Rerolls"), 
+                                    choices = c(0:6), 
+                                    selected = 0),
                         awesomeCheckbox('dgbanner',
                                         label = 'FNP 1/2 Rerolls',
                                         value = FALSE)
                         ,
                         awesomeCheckbox('thuman',
                                         label = 'Transhuman (Save -> Crit Save)',
-                                        value = FALSE),
-                        awesomeCheckbox('starsaves',
+                                        value = FALSE)
+                        ,awesomeCheckbox('starsaves',
                                         label = 'Starfire Saves (Crit -> Convert Failed Save)',
                                         value = FALSE)
+                        ,awesomeCheckbox('l5saves',
+                                        label = '5+ Crit Saves',
+                                        value = FALSE)
+                        ,awesomeCheckbox('blessPox',
+                                         label = 'Blessings of Pox',
+                                         value = FALSE)
                     )
                 )
                 ,
@@ -378,6 +284,7 @@ server <- function(input, output) {
                  MW,
                  Lethal,
                  SemiLethal,
+                 Elite,
                  FNP,
                  DfRerolls,
                  DGBanner,
@@ -385,12 +292,21 @@ server <- function(input, output) {
                  ForcedCrit,
                  Transhuman,
                  StarfireSaves,
-                 NoCover) {
+                 NoCover,
+                 L5Saves,
+                 PoxBless,
+                 CloseAssault,
+                 RRSixes) {
             Output <- do.call(rbind, lapply(1:k, function(p) {
                 #Uses the same basic seed for both weapons
-                Attacks <- max(0,Attacks-AutoRetain)
+                Attacks <- max(0,as.numeric(Attacks)-AutoRetain)
                 set.seed(SeedH[p])
                 Rolls <- sample(1:6, Attacks, replace = T)
+                set.seed(SeedL[p])
+                if(RRSixes == TRUE){
+                Rolls2 <- sample(1:6,length(subset(Rolls,Rolls == 6)), replace = TRUE)
+                Rolls <- subset(Rolls, Rolls != 6)
+                }
                 set.seed(SeedR[p])
                 #Lethal
                 CritNumber <- ifelse(Lethal > 0, Lethal, 6)
@@ -429,6 +345,8 @@ server <- function(input, output) {
                     } else{
                         Rolls[1]
                     }
+                if(RRSixes == TRUE){
+                Rolls <- c(Rolls, Rolls2)}
                 Hits <- suppressWarnings(if(is.na(Rolls)){AutoRetain} else{
                 
                     as.numeric(length(Rolls[Rolls >= BS &
@@ -436,6 +354,20 @@ server <- function(input, output) {
                 Crits <- suppressWarnings(if(is.na(Rolls)){0} else{
                     as.numeric(length(Rolls[Rolls >= CritNumber &
                                                 Rolls >= BS]))})
+                
+                #Elite
+                if(Elite == TRUE & MW + CritDamage >= 2*NormalDamage & Hits > 0){
+                  Hits <- Hits - 1
+                  Crits <- Crits + 1
+                } else if(Elite == TRUE & MW + CritDamage >= 2*NormalDamage & Hits == 0 & Crits < Attacks){
+                  Crits <- Crits + 1
+                }
+                if(Elite == TRUE & Hits + Crits < Attacks){
+                Hits <-  Hits + 1
+                }else if(Elite == TRUE & Hits + Crits == Attacks & Crits < Attacks){
+                Hits <- Hits -1
+                Crits <- Crits + 1
+                }
                 
                 
                 
@@ -455,8 +387,12 @@ server <- function(input, output) {
                            0)
                 Hits <- Hits - SemiL
                 Crits <- Crits + SemiL
-                Hits <- ifelse(ForcedCrit == TRUE & Hits > 0,Hits-1,Hits)
-                Crits <- ifelse(ForcedCrit == TRUE & Hits > 0, Crits + 1, Crits)
+                if(Hits > 0 & ForcedCrit == TRUE){
+                  Crits <- Crits + 1
+                  Hits <- Hits - 1
+                }
+                # Crits <- ifelse(ForcedCrit == TRUE & Hits > 0, Crits + 1, Crits)
+                # Hits <- ifelse(ForcedCrit == TRUE & Hits > 0,Hits-1,Hits)
                 
                 
                 #Starfire
@@ -474,6 +410,8 @@ server <- function(input, output) {
                                Crits >= 1 & Hits >= 1, 1, 0)
                 Crits <- ifelse(Rends == 1, Crits + 1, Crits)
                 Hits <- ifelse(Rends == 1, Hits - 1, Hits)
+                
+                Hits <- ifelse(Hits+Crits >=2 & Hits+Crits < Attacks & CloseAssault == TRUE, Hits + 1, Hits)
                 
                 #Mortal Wounds
                 Mortals <- MW * Crits
@@ -509,15 +447,20 @@ server <- function(input, output) {
                 
                 NSaves <-
                     as.numeric(length(Saves[Saves >= Save &
-                                                Saves < 6]))
+                                                Saves < ifelse(L5Saves == FALSE,6,5)]))
                 NSaves <- if (Cover > 0 & NoCover == FALSE) {
                     NSaves + Cover
                 } else{
                     NSaves
                 }
+                if(PoxBless == TRUE & sum(Saves[Saves<Save]) >=7){
+                  NSaves <- NSaves + 1}
                 #Cap saves at Defense dice minus AP
                 NSaves <- min(NSaves, Defense - AP)
-                CSaves <- as.numeric(length(Saves[Saves == 6]))
+                CSaves <- if(L5Saves == TRUE){
+                  as.numeric(length(Saves[Saves >= 5]))
+                  }else{
+                as.numeric(length(Saves[Saves == 6]))}
                 
                 if(Transhuman == TRUE & NSaves > 0){
                     CSaves <- CSaves + 1
@@ -534,7 +477,7 @@ server <- function(input, output) {
                 C2H <-
                     ifelse(CritDamage < NormalDamage &
                                Hits - NSaves > 0,
-                           max(0, CSaves - (Hits - NSaves)),
+                           max(CSaves, CSaves - (Hits - NSaves)),
                            0)
                 
                 
@@ -652,6 +595,7 @@ server <- function(input, output) {
     }
     k <- 1000
     SeedH <- sample(1:k, k, replace = TRUE)
+    SeedL <- sample(1:k, k, replace = TRUE)
     SeedR <- sample(1:k, k, replace = TRUE)
     SeedS <- sample(1:k, k, replace = TRUE)
     
@@ -665,31 +609,36 @@ server <- function(input, output) {
     
     W1 <- reactive({
         W1 <- RangedSim(
-            Attacks = input$attacks1,
-            BS = input$bs1,
-            NormalDamage = input$normaldamage1,
-            CritDamage = input$critdamage1,
-            Save = input$save,
-            Defense = input$defense,
+            Attacks = as.numeric(input$attacks1),
+            BS = as.numeric(input$bs1),
+            NormalDamage = as.numeric(input$normaldamage1),
+            CritDamage = as.numeric(input$critdamage1),
+            Save = as.numeric(input$save),
+            Defense = as.numeric(input$defense),
             k = k,
             Name = A,
-            Piercing = input$piercing1,
-            AP = input$ap1,
-            Cover = input$cover,
+            Piercing = as.numeric(input$piercing1),
+            AP = as.numeric(input$ap1),
+            Cover = as.numeric(input$cover),
             Rerolls = input$reroll1,
             Rending = input$rending1,
             Starfire = input$starfire1,
-            MW = input$mw1,
-            Lethal = input$lethal1,
+            MW = as.numeric(input$mw1),
+            Lethal = as.numeric(input$lethal1),
             SemiLethal = input$semilethal1,
-            FNP = input$fnp,
-            DfRerolls = input$dfrerolls,
+            Elite = input$elite1,
+            FNP = as.numeric(input$fnp),
+            DfRerolls = as.numeric(input$dfrerolls),
             DGBanner = input$dgbanner,
-            AutoRetain = input$autoretain1,
+            AutoRetain = as.numeric(input$autoretain1),
             ForcedCrit = input$forcecrit1,
             Transhuman = input$thuman,
             StarfireSaves = input$starsaves,
-            NoCover = input$nocover1
+            NoCover = input$nocover1,
+            L5Saves = input$l5saves,
+            PoxBless = input$blessPox,
+            CloseAssault = input$closeassault1,
+            RRSixes = input$RR61
         ) %>% filter(Number2 > 0)
         return(W1)
     })
@@ -697,31 +646,36 @@ server <- function(input, output) {
     
     W2 <- reactive({
         W2 <- RangedSim(
-            Attacks = input$attacks2,
-            BS = input$bs2,
-            NormalDamage = input$normaldamage2,
-            CritDamage = input$critdamage2,
-            Save = input$save,
-            Defense = input$defense,
+            Attacks = as.numeric(input$attacks2),
+            BS = as.numeric(input$bs2),
+            NormalDamage = as.numeric(input$normaldamage2),
+            CritDamage = as.numeric(input$critdamage2),
+            Save = as.numeric(input$save),
+            Defense = as.numeric(input$defense),
             k = k,
             Name = B,
-            Piercing = input$piercing2,
-            AP = input$ap2,
-            Cover = input$cover,
+            Piercing = as.numeric(input$piercing2),
+            AP = as.numeric(input$ap2),
+            Cover = as.numeric(input$cover),
             Rerolls = input$reroll2,
             Rending = input$rending2,
             Starfire = input$starfire2,
-            MW = input$mw2,
-            Lethal = input$lethal2,
+            MW = as.numeric(input$mw2),
+            Lethal = as.numeric(input$lethal2),
             SemiLethal = input$semilethal2,
-            FNP = input$fnp,
-            DfRerolls = input$dfrerolls,
+            Elite = input$elite2,
+            FNP = as.numeric(input$fnp),
+            DfRerolls = as.numeric(input$dfrerolls),
             DGBanner = input$dgbanner,
-            AutoRetain = input$autoretain2,
+            AutoRetain = as.numeric(input$autoretain2),
             ForcedCrit = input$forcecrit2,
             Transhuman = input$thuman,
             StarfireSaves = input$starsaves,
-            NoCover = input$nocover2
+            NoCover = input$nocover2,
+            L5Saves = input$l5saves,
+            PoxBless = input$blessPox,
+            CloseAssault = input$closeassault2,
+            RRSixes = input$RR62
         ) %>% filter(Number2 > 0)
         return(W2)
     })
@@ -743,13 +697,14 @@ server <- function(input, output) {
                 Right = W2,
                 'Right Events' = Events.y
             ),
-            options = list(paging = TRUE, pageLength = 60,
+            options = list(paging = TRUE, pageLength = 60,dom = 't',
                            initComplete = JS(
                                "function(settings, json) {",
                                "$(this.api().table().header()).css({'color': '#000'});",
                                "}")
                            )
-        ))
+        )%>% 
+          formatPercentage(c("Left", "Right"), 1))
     colors <- c("blue", "red")
     names(colors) <- c(A, B)
     
@@ -806,6 +761,6 @@ server <- function(input, output) {
             labs(color = "Legend", title = C()) +
             scale_color_manual(values = colors)
     })
-    
+
 }
 shinyApp(ui, server)
